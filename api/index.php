@@ -21,7 +21,7 @@ $request->body = json_decode($body);
 function router($req, $res) {
     if (!isset($req->uri[2]) || $req->uri[2] == "") { 
         $res->status = 200;
-        $res->content = json_encode(['message' => "Welcome to API"]);
+        $res->content = json_encode(['message' => "Welcome to Appart-API"]);
         return;
     }
 

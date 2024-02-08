@@ -1,6 +1,5 @@
 <?php
 include_once "./repository/UserRepository.php";
-include_once "./config/Database.php";
 
 class UserService {
     private $repository;
@@ -10,9 +9,6 @@ class UserService {
     }
 
     function createUser($userObject) {
-        $nom = $userObject->nom;
-        $role = $userObject->role;
-
         return $this->repository->createUser($userObject);
     }
 

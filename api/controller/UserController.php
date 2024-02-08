@@ -1,5 +1,7 @@
 <?php
 require_once './service/UserService.php';
+require_once './model/UserModel.php';
+
 
 class UserController {
     private $service;
@@ -56,10 +58,10 @@ class UserController {
     
         try {
             $newUser = $this->service->createUser($userObject);
-            $res->statusCode = 201; 
+            $res->status = 201; 
             $res->content = json_encode(['message' => 'Utilisateur cree avec succes.']);
         } catch (Exception $e) {
-            $res->statusCode = 500;
+            $res->status = 500;
             $res->content = json_encode(['error' => 'Erreur lors de la création de l utilisateur.']);
         }
     }

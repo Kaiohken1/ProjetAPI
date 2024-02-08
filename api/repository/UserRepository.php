@@ -10,12 +10,12 @@ class UserRepository {
 
     public function createUser($userObject) : void {
         try {
-            $query = "INSERT INTO users (nom, role) VALUES (:nom, :role)";
+            $query = "INSERT INTO utilisateurs (nom, role) VALUES (:nom, :role)";
     
             $stmt = $this->conn->prepare($query);
-    
-            $stmt->bindParam(':nom', $nom);
-            $stmt->bindParam(':role', $role);
+
+            $stmt->bindParam(':nom', $userObject->nom);
+            $stmt->bindParam(':role', $userObject->role);
     
             $stmt->execute();
         } catch (PDOException $e) {
@@ -25,7 +25,7 @@ class UserRepository {
 
     public function getUsers(): array {
         try {
-            $query = "SELECT * FROM utilisateur"; 
+            $query = "SELECT * FROM utilisateurs"; 
     
             $stmt = $this->conn->prepare($query); 
             $stmt->execute(); 
