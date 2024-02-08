@@ -19,12 +19,6 @@ $body = file_get_contents("php://input");
 $request->body = json_decode($body);
 
 function router($req, $res) {
-    if ($req->uri[1] !== "api") {
-        $res->status = 400;
-        $res->content = json_encode(['message' => "Invalid API endpoint"]);
-        return;
-    }
-
     if (!isset($req->uri[2]) || $req->uri[2] == "") { 
         $res->status = 200;
         $res->content = json_encode(['message' => "Welcome to API"]);

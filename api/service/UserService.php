@@ -1,15 +1,12 @@
 <?php
-include_once "../repository/UserRepository.php";
-include_once "../config/Database.php";
+include_once "./repository/UserRepository.php";
+include_once "./config/Database.php";
 
 class UserService {
     private $repository;
 
     function __construct() {
-        $database = new Database();
-        $db = $database->getConnection();
-
-        $this->userRepository = new UserRepository($db);
+        $this->repository = new UserRepository();
     }
 
     function createUser($userObject) {
@@ -17,6 +14,10 @@ class UserService {
         $role = $userObject->role;
 
         return $this->repository->createUser($userObject);
+    }
+
+    function getUsers() {
+        return $this->repository->getUsers();
     }
 }
 ?>

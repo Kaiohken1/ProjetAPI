@@ -1,18 +1,18 @@
 <?php
-include_once "../config/Database.php";
+include_once "./config/Database.php";
 
 class UserRepository {
-    private $db;
+    private $conn = null;
 
-    public function __construct($db) {
-        $this->db = $db;
+    public function __construct() {
+        $this->conn = Database::getInstance();
     }
 
     public function createUser($userObject) : void {
         try {
             $query = "INSERT INTO users (nom, role) VALUES (:nom, :role)";
     
-            $stmt = $this->db->prepare($query);
+            $stmt = $this->conn->prepare($query);
     
             $stmt->bindParam(':nom', $nom);
             $stmt->bindParam(':role', $role);
@@ -22,6 +22,24 @@ class UserRepository {
             throw new Exception("Erreur lors de la création de l'utilisateur: " . $e->getMessage());
         }
     }
+
+    public function getUsers(): array {
+        try {
+            $query = "SELECT * FROM utilisateur"; 
+    
+            $stmt = $this->conn->prepare($query); 
+            $stmt->execute(); 
+            $users = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $users[] = $row; 
+            }
+    
+            return $users;
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la récupération des utilisateurs: " . $e->getMessage());
+        }
+    }
+    
     
 }
 

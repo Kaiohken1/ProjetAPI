@@ -1,22 +1,28 @@
 <?php
 class Database {
-    private $host = "localhost";
-    private $db_name = "appart_db";
-    private $username = "user";
-    private $password = "password";
-    public $conn;
+    private static $instance = null;
+    private $conn;
 
-    public function getConnection() {
-        $this->conn = null;
+    private function __construct() {
+        $host = "database";
+        $db_name = "appart_db";
+        $username = "user";
+        $password = "password";
+
         try {
-            $dsn = "pgsql:host=" . $this->host . ";port=5432;dbname=" . $this->db_name;
-            $this->conn = new PDO($dsn, $this->username, $this->password);
+            $dsn = "pgsql:host=" . $host . ";port=5432;dbname=" . $db_name;
+            $this->conn = new PDO($dsn, $username, $password);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $exception) {
-            echo "Erreur de connexion : " . $exception->getMessage();
+            throw new Exception("Erreur de connexion : " . $exception->getMessage());
         }
-        return $this->conn;
+    }
+
+    public static function getInstance() {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance->conn;
     }
 }
-
 ?>

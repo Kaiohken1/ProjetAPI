@@ -1,14 +1,14 @@
 <?php
-require_once './model/UserModel.php';
+require_once './service/UserService.php';
 
 class UserController {
     private $service;
 
-    public function __construct($service) {
-        $this->service = $service;
+    function __construct() {
+        $this->service = new UserService();
     }
 
-    public function dispatch($req, $res) {
+    function dispatch($req, $res) {
         switch ($req->method) {
             case "GET":
                 if (isset($req->uri[3])) { 
@@ -41,11 +41,13 @@ class UserController {
     }
 
     function getUsers($req, $res) {
+        $users = $this->service->getUsers();
+        $res->content = $users;
     }
 
     function createUser($req, $res) {
         if (empty($req->body->nom) || empty($req->body->role)) {
-            $res->statusCode = 400;
+            $res->status = 400;
             $res->content = json_encode(['error' => 'nom et role requis.']);
             return;
         }
