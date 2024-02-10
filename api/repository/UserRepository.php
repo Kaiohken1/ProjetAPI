@@ -1,5 +1,7 @@
 <?php
 include_once "./config/Database.php";
+require_once "./common/exception/repositoryException.php";
+
 
 class UserRepository {
     private $conn = null;
@@ -24,20 +26,64 @@ class UserRepository {
     }
 
     public function getUsers(): array {
-        try {
-            $query = "SELECT * FROM utilisateurs"; 
+        $query = "SELECT * FROM utilisateurs"; 
     
-            $stmt = $this->conn->prepare($query); 
-            $stmt->execute(); 
-            $users = [];
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $users[] = $row; 
-            }
-    
-            return $users;
-        } catch (PDOException $e) {
-            throw new Exception("Erreur lors de la récupération des utilisateurs: " . $e->getMessage());
+        $stmt = $this->conn->prepare($query); 
+
+        $stmt->execute();
+        $users = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $users[] = $row; 
         }
+        return $users;
+    }
+
+    function getUser($id) {
+        $query = "SELECT * FROM utilisateurs WHERE id = :id";
+    
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+    
+        $stmt->execute();
+        
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if (!$user) {
+            throw new BddNotFoundException("Cet utilisateur n'existe pas");
+        }
+    
+        return $user;
+    }
+
+    public function deleteUser($id): void {
+        $query = "DELETE FROM utilisateurs WHERE id = :id";
+    
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+
+        $stmt->execute();
+    
+        $rows = $stmt->rowCount();
+        if ($rows === 0) {
+            throw new Exception("Aucun utilisateur trouvé avec l'ID spécifié.");
+        }
+    }
+
+    public function updateUser($id, $valuesToUpdate): void {
+        $columnsToUpdate = array();
+        $params = array(':id' => $id);
+    
+        foreach ($valuesToUpdate as $key => $value) {
+            $columnsToUpdate[] = "$key = :$key";
+            $params[":$key"] = $value;
+        }
+    
+        $setClause = implode(", ", $columnsToUpdate);
+    
+        $query = "UPDATE utilisateurs SET $setClause WHERE id = :id";
+    
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute($params);
     }
     
     

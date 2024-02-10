@@ -40,17 +40,22 @@ class UserController {
     }
 
     function getUser($req, $res) {
+        $user = $this->service->getUser($req->uri[3]);
+        
+        $res->status = 200;
+        $res->content = $user;
     }
 
     function getUsers($req, $res) {
         $users = $this->service->getUsers();
+        $res->status = 200;
         $res->content = $users;
     }
 
     function createUser($req, $res) {
         if (empty($req->body->nom) || empty($req->body->role)) {
             $res->status = 400;
-            $res->content = json_encode(['error' => 'nom et role requis.']);
+            $res->content = json_encode(['error' => 'valeurs manquantes.']);
             return;
         }
     
@@ -67,9 +72,36 @@ class UserController {
     }
 
     function updateUser($req, $res) {
+        if(!isset($req->uri[3])) {
+            $res->status = 400;
+            $res->content = json_encode(['error' => 'Aucun utilisateur spécifié.']);
+            return;
+        }
+        $valuesToUpdate = array();
+    
+        if (isset($req->body->nom)) {
+            $valuesToUpdate['nom'] = $req->body->nom;
+        }
+    
+        if (isset($req->body->role)) {
+            $valuesToUpdate['role'] = $req->body->role;
+        }
+    
+        $this->service->updateUser($req->uri[3], $valuesToUpdate);
     }
+    
+    
 
     function deleteUser($req, $res) {
+        if(!isset($req->uri[3])) {
+            $res->status = 400;
+            $res->content = json_encode(['error' => 'Aucun utilisateur spécifié.']);
+        }
+
+        $this->service->deleteUser($req->uri[3]);
+
+        $res->status = 200;
+        $res->content = json_encode(['message' => 'Utilisateur supprime avec succes']);
     }
 }
 
