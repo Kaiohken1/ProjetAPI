@@ -12,11 +12,12 @@ class UserRepository {
 
     public function createUser($userObject) : void {
         try {
-            $query = "INSERT INTO utilisateurs (nom, role) VALUES (:nom, :role)";
+            $query = "INSERT INTO utilisateurs (nom, password, role) VALUES (:nom, :password, :role)";
     
             $stmt = $this->conn->prepare($query);
 
             $stmt->bindParam(':nom', $userObject->nom);
+            $stmt->bindParam(':password', $userObject->motdePasse);
             $stmt->bindParam(':role', $userObject->role);
     
             $stmt->execute();
@@ -86,8 +87,24 @@ class UserRepository {
         $stmt->execute($params);
     }
     
+    public function authenticateUser($username, $password) {
+        $query = "SELECT * FROM utilisateurs WHERE nom = :username";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+    
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if (!$user) {
+            throw new BddNotFoundException("Utilisateur non trouvé");
+        }
+    
+        if (password_verify($password, $user['password'])) {
+            return $user;
+        } else {
+            throw new Exception("Mot de passe incorrect.");
+        }
+    }
     
 }
-
-
 ?>

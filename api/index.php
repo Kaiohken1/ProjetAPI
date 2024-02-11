@@ -38,7 +38,7 @@ function router($req, $res) {
 }
 try {
     router($request, $response);
-} catch (BddNotFoundException $e) {
+} catch (Exception $e) {
     $response->status = 404;
     $response->content = '{"message":"'.$e->getMessage().'"}';
 }

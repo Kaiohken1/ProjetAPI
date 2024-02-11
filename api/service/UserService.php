@@ -9,6 +9,7 @@ class UserService {
     }
 
     function createUser($userObject) {
+        $userObject->motdePasse = password_hash($userObject->motdePasse, PASSWORD_DEFAULT);
         return $this->repository->createUser($userObject);
     }
 
@@ -25,7 +26,11 @@ class UserService {
     }
 
     function updateUser($id, $userObject) {
-        return $this->repository->deleteUser($id);
+        return $this->repository->updateUser($id, $userObject);
+    }
+
+    function authenticateUser($username, $password) {
+        return $this->repository->authenticateUser($username, $password);
     }
 }
 ?>
