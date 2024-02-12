@@ -1,6 +1,5 @@
 <?php
 class Reservation {
-    public $id;
     public $appartementId;
     public $dateDebut;
     public $dateFin;

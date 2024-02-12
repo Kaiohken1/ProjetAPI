@@ -1,12 +1,12 @@
 <?php
 class Appartement {
-    public $id;
     public $superficie;
-    public $personnes;
+    public $place;
     public $adresse;
     public $disponibilite;
     public $prix;
     public $proprietaireid;
+    public $chambre;
 }
 
 ?>
