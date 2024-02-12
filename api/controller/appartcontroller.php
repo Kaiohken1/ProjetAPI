@@ -2,33 +2,33 @@
 require_once './service/AppartService.php';
 require_once './model/AppartModel.php';
 
-class AppartementController {
+class AppartController {
     private $service;
 
     function __construct() {
-        $this->service = new AppartementService();
+        $this->service = new AppartService();
     }
 
     function dispatch($req, $res) {
         switch ($req->method) {
             case "GET":
                 if (isset($req->uri[3])) { 
-                    $this->getAppartement($req, $res);
+                    $this->getAppart($req, $res);
                 } else {
-                    $this->getAppartements($req, $res);
+                    $this->getApparts($req, $res);
                 }
                 break;
 
             case "POST":
-                $this->createAppartement($req, $res);
+                $this->createAppart($req, $res);
                 break;
 
             case "PATCH":
-                $this->updateAppartement($req, $res);
+                $this->updateAppart($req, $res);
                 break;
 
             case "DELETE":
-                $this->deleteAppartement($req, $res);
+                $this->deleteAppart($req, $res);
                 break;
 
             default:
@@ -38,29 +38,29 @@ class AppartementController {
         }
     }
 
-    function getAppartement($req, $res) {
+    function getAppart($req, $res) {
        
     }
 
-    function getAppartements($req, $res) {
-        $appartements = $this->service->getAppartements();
+    function getApparts($req, $res) {
+        $apparts = $this->service->getApparts();
         $res->content = $appartements;
     }
 
-    function createAppartement($req, $res) {
+    function createAppart($req, $res) {
         if (empty($req->body->superficie) || empty($req->body->adresse)) {
             $res->status = 400;
             $res->content = json_encode(['error' => 'Superficie et adresse requis.']);
             return;
         }
     
-        $appartementObject = new Appartement();
-        $appartementObject->superficie = $req->body->superficie;
-        $appartementObject->adresse = $req->body->adresse;
+        $appartObject = new Appart();
+        $appartObject->superficie = $req->body->superficie;
+        $appartObject->adresse = $req->body->adresse;
         
     
         try {
-            $newAppartement = $this->service->createAppartement($appartementObject);
+            $newAppart = $this->service->createAppart($appartObject);
             $res->status = 201; 
             $res->content = json_encode(['message' => 'Appartement créé avec succès.']);
         } catch (Exception $e) {
@@ -69,10 +69,10 @@ class AppartementController {
         }
     }
 
-    function updateAppartement($req, $res) {
+    function updateAppart($req, $res) {
     }
 
-    function deleteAppartement($req, $res) {
+    function deleteAppart($req, $res) {
     }
 }
 ?>
