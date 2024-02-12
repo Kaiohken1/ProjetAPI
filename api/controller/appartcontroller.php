@@ -1,5 +1,5 @@
 <?php
-require_once './service/AppartementService.php';
+require_once './service/AppartService.php';
 require_once './model/AppartModel.php';
 
 class AppartementController {

@@ -2,7 +2,7 @@
 include_once "./common/request.php";
 include_once "./common/response.php";
 include_once "./controller/UserController.php";
-include_once "./controller/AppartController.php":
+include_once "./controller/AppartController.php";
 
 header("Content-Type: application/json; charset=utf8");
 header("Access-Control-Allow-Origin: *");
