@@ -1,6 +1,9 @@
 <?php
 require_once './service/UserService.php';
 require_once './model/UserModel.php';
+require 'vendor/autoload.php';
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 
 class UserController {
@@ -111,16 +114,43 @@ class UserController {
     
 
     function deleteUser($req, $res) {
-        if(!isset($req->uri[3])) {
-            $res->status = 400;
-            $res->content = json_encode(['error' => 'Aucun utilisateur spécifié.']);
+        if (!isset($req->headers['Authorization'])) {
+            $res->status = 401;
+            $res->content = json_encode(['error' => 'Acces non autorise. Token manquant.']);
+            return;
         }
+    
+        $auth = $req->headers['Authorization'];
+        $token = str_replace('Bearer ', '', $auth);
 
+        $secretKey = 'cleSuperSecrete';
+    
+        try {
+            $decodedToken = JWT::decode($token, new Key($secretKey, 'HS256'));
+        } catch (Exception $e) {
+            $res->status = 401;
+            $res->content = json_encode(['error' => 'Token invalide.', 'details' => $e->getMessage()]);
+            return;
+        }
+    
+        if ($decodedToken->role !== 'admin') {
+            $res->status = 403;
+            $res->content = json_encode(['error' => 'Acces non autorise']);
+            return;
+        }
+    
+        if (!isset($req->uri[3])) {
+            $res->status = 400;
+            $res->content = json_encode(['error' => 'Aucun utilisateur spécifie.']);
+            return;
+        }
+    
         $this->service->deleteUser($req->uri[3]);
-
+    
         $res->status = 200;
         $res->content = json_encode(['message' => 'Utilisateur supprime avec succes']);
     }
+    
 
     function login($req, $res) {
         if (empty($req->body->nom) || empty($req->body->password)) {
@@ -128,18 +158,43 @@ class UserController {
             $res->content = json_encode(['error' => 'Valeurs manquates pour la connexion.']);
             return;
         }
-
+    
         $user = $this->service->authenticateUser($req->body->nom, $req->body->password);
-
+    
         if ($user) {
+            $data = [
+                'userId' => $user['id'],
+                'username' => $user['nom'],
+                'role' => $user['role']
+            ];
+    
+            $token = Firebase\JWT\JWT::encode($data, 'cleSuperSecrete', 'HS256');
+    
             $res->status = 200;
-            $res->content = json_encode(['message' => 'aaaah non cest jason']);
+            $res->content = json_encode(['token' => $token]);
         } else {
             $res->status = 401;
             $res->content = json_encode(['error' => 'Identifiants incorrects.']);
         }
     }
+    
+    function generateToken($userId, $username, $role) {
+        $token = JWT::encode([
+            'userId' => $userId,
+            'username' => $username,
+            'role' => $role,
+            'exp' => time() + (60 * 60) 
+        ], 'cleSuperSecrete');
+    
+        return $token;
+    }
 
+    function decodeToken($token) {
+        $secretKey = 'cleSuperSecrete';
+
+        $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
+    }
+    
     function logout($req, $res) {
         session_destroy();
         phpinfo();

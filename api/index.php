@@ -10,6 +10,8 @@ $response = new Response();
 
 $request = new Request();
 
+$request->headers = getallheaders();
+
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $request->uri = explode( '/', $uri );
 
