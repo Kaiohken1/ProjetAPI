@@ -11,6 +11,8 @@ $response = new Response();
 
 $request = new Request();
 
+$request->headers = getallheaders();
+
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $request->uri = explode( '/', $uri );
 
@@ -43,7 +45,7 @@ function router($req, $res) {
 }
 try {
     router($request, $response);
-} catch (BddNotFoundException $e) {
+} catch (Exception $e) {
     $response->status = 404;
     $response->content = '{"message":"'.$e->getMessage().'"}';
 }

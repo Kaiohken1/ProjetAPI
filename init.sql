@@ -1,6 +1,7 @@
 CREATE TABLE utilisateurs (
     id serial PRIMARY KEY,
-    nom varchar(255), 
+    nom varchar(255),
+    password varchar(255), 
     role varchar(255)
 );
 
