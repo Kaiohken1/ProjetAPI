@@ -16,7 +16,7 @@ class AppartementRepository {
 
             $stmt->bindParam(':superficie', $appartementObject->superficie);
             $stmt->bindParam(':adresse', $appartementObject->adresse);
-            // Ajoutez d'autres bindParam si nécessaire
+            
     
             $stmt->execute();
         } catch (PDOException $e) {
