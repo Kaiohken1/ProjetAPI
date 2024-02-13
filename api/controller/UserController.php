@@ -1,6 +1,7 @@
 <?php
 require_once './service/UserService.php';
 require_once './model/UserModel.php';
+require_once "./common/token.php";
 require 'vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -93,6 +94,20 @@ class UserController {
     }
 
     function updateUser($req, $res) {
+        $decodedToken = decodeToken($req->headers['Authorization']);
+        
+        if(!$decodedToken) {
+            $res->status = 401;
+            $res->content = json_encode(['error' => 'Token invalide.']);
+            return;
+        }
+    
+        if ($decodedToken->role !== 'admin') {
+            $res->status = 403;
+            $res->content = json_encode(['error' => 'Acces non autorise']);
+            return;
+        }
+
         if(!isset($req->uri[3])) {
             $res->status = 400;
             $res->content = json_encode(['error' => 'Aucun utilisateur spécifié.']);
@@ -120,28 +135,17 @@ class UserController {
             return;
         }
     
-        $auth = $req->headers['Authorization'];
-        $token = str_replace('Bearer ', '', $auth);
-
-        $secretKey = 'cleSuperSecrete';
-    
-        try {
-            $decodedToken = JWT::decode($token, new Key($secretKey, 'HS256'));
-        } catch (Exception $e) {
+        $decodedToken = decodeToken($req->headers['Authorization']);
+        
+        if(!$decodedToken) {
             $res->status = 401;
-            $res->content = json_encode(['error' => 'Token invalide.', 'details' => $e->getMessage()]);
+            $res->content = json_encode(['error' => 'Token invalide.']);
             return;
         }
     
         if ($decodedToken->role !== 'admin') {
             $res->status = 403;
             $res->content = json_encode(['error' => 'Acces non autorise']);
-            return;
-        }
-    
-        if (!isset($req->uri[3])) {
-            $res->status = 400;
-            $res->content = json_encode(['error' => 'Aucun utilisateur spécifie.']);
             return;
         }
     
@@ -162,13 +166,7 @@ class UserController {
         $user = $this->service->authenticateUser($req->body->nom, $req->body->password);
     
         if ($user) {
-            $data = [
-                'userId' => $user['id'],
-                'username' => $user['nom'],
-                'role' => $user['role']
-            ];
-    
-            $token = Firebase\JWT\JWT::encode($data, 'cleSuperSecrete', 'HS256');
+            $token = generateToken($user['id'], $user['nom'], $user['role']);
     
             $res->status = 200;
             $res->content = json_encode(['token' => $token]);
@@ -178,22 +176,22 @@ class UserController {
         }
     }
     
-    function generateToken($userId, $username, $role) {
-        $token = JWT::encode([
-            'userId' => $userId,
-            'username' => $username,
-            'role' => $role,
-            'exp' => time() + (60 * 60) 
-        ], 'cleSuperSecrete');
+    // function generateToken($userId, $username, $role) {
+    //     $token = JWT::encode([
+    //         'userId' => $userId,
+    //         'username' => $username,
+    //         'role' => $role,
+    //         'exp' => time() + (60 * 60) 
+    //     ], 'cleSuperSecrete');
     
-        return $token;
-    }
+    //     return $token;
+    // }
 
-    function decodeToken($token) {
-        $secretKey = 'cleSuperSecrete';
+    // function decodeToken($token) {
+    //     $secretKey = 'cleSuperSecrete';
 
-        $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
-    }
+    //     $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
+    // }
     
     function logout($req, $res) {
         session_destroy();
