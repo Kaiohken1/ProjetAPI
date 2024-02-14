@@ -39,12 +39,17 @@ class AppartController {
     }
 
     function getAppart($req, $res) {
+
+        $appart = $this->service->getAppart($req->uri[3]);
+
+        $res->status = 200;
+        $res->content = $appart;
        
     }
 
     function getApparts($req, $res) {
         $apparts = $this->service->getApparts();
-        $res->content = $appartements;
+        $res->content = $apparts;
     }
 
     function createAppart($req, $res) {
@@ -54,20 +59,26 @@ class AppartController {
             return;
         }
     
-        $appartObject = new Appart();
-        $appartObject->superficie = $req->body->superficie;
-        $appartObject->adresse = $req->body->adresse;
         
+        $appartObject = new Appart(
+            $req->body->superficie,
+            $req->body->personnes,
+            $req->body->adresse,
+            $req->body->disponibilite,
+            $req->body->prix,
+            $req->body->proprietaireid
+        );
     
         try {
             $newAppart = $this->service->createAppart($appartObject);
-            $res->status = 201; 
+            $res->status = 201;
             $res->content = json_encode(['message' => 'Appartement créé avec succès.']);
         } catch (Exception $e) {
             $res->status = 500;
-            $res->content = json_encode(['error' => 'Erreur lors de la création de l\'appartement.']);
+            $res->content = json_encode(['error' => 'Erreur lors de la création de l\'appartement: ' . $e->getMessage()]);
         }
     }
+    
 
     function updateAppart($req, $res) {
     }

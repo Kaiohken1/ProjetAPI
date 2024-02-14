@@ -1,12 +1,21 @@
 <?php
-class Appartement {
+class Appart {
     public $superficie;
-    public $place;
+    public $personnes;
     public $adresse;
     public $disponibilite;
     public $prix;
     public $proprietaireid;
-    public $chambre;
+
+    public function __construct($superficie, $personnes, $adresse, $disponibilite, $prix, $proprietaireid) {
+        $this->superficie = $superficie;
+        $this->personnes = $personnes;
+        $this->adresse = $adresse;
+        $this->disponibilite = $disponibilite;
+        $this->prix = $prix;
+        $this->proprietaireid = $proprietaireid;
+    }
 }
+
 
 ?>

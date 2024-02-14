@@ -15,10 +15,16 @@ class AppartService {
     function getApparts() {
         return $this->repository->getApparts();
     }
+
+    function getAppart(int $id) {
+ return $this->repository->getappart($id);
+    }
+
+    function isAppartReserve(){
+        return $this->repository->isAppartReserve($appartId);
+    }
+    
 }
 
-function isAppartementReserve(int $appartementId): bool {
-    return $this->repository->isAppartementReserve($appartementId);
-}
 
 ?>

@@ -1,65 +1,99 @@
 <?php
 include_once "./config/Database.php";
 
-class AppartementRepository {
+class AppartRepository {
     private $conn = null;
 
     public function __construct() {
         $this->conn = Database::getInstance();
     }
 
-    public function createAppart($appartementObject) : void {
+    public function createAppart($appartObject) : void {
         try {
-            $query = "INSERT INTO appartements (superficie, adresse) VALUES (:superficie, :adresse)";
+           
+            $query = "INSERT INTO appartement (superficie, adresse, personnes, disponibilite, prix, proprietaireid) VALUES (:superficie, :adresse, :personnes, :disponibilite, :prix, :proprietaireid)";
     
             $stmt = $this->conn->prepare($query);
-
-            $stmt->bindParam(':superficie', $appartementObject->superficie);
-            $stmt->bindParam(':adresse', $appartementObject->adresse);
+    
             
+            $stmt->bindParam(':superficie', $appartObject->superficie);
+            $stmt->bindParam(':adresse', $appartObject->adresse);
+            $stmt->bindParam(':personnes', $appartObject->personnes);
+            $stmt->bindParam(':disponibilite', $appartObject->disponibilite);
+            $stmt->bindParam(':prix', $appartObject->prix);
+            $stmt->bindParam(':proprietaireid', $appartObject->proprietaireid);
+           
     
             $stmt->execute();
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la création de l'appartement: " . $e->getMessage());
         }
     }
+    
 
     public function getApparts(): array {
         try {
-            $query = "SELECT * FROM appartements"; 
+            $query = "SELECT * FROM appartement"; 
     
             $stmt = $this->conn->prepare($query); 
             $stmt->execute(); 
-            $appartements = [];
+            $apparts = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $appartements[] = $row; 
+                $apparts[] = $row; 
             }
     
-            return $appartements;
+            return $apparts;
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la récupération des appartements: " . $e->getMessage());
         }
     }
-}
-
-
-public function isAppartementReserve(int $appartementId): bool {
-    try {
-        $query = "SELECT estReserve FROM appartements WHERE id = :id";
-
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $appartementId, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        if ($stmt->rowCount() > 0) {
+    
+    
+    public function getAppart(int $id): ?array {
+        try {
+            $query = "SELECT * FROM appartement WHERE id = :id";
+    
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+    
+          
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return (bool)$row['estReserve'];
-        } else {
-            throw new Exception("Aucun appartement trouvé avec l'ID $appartementId");
+    
+            if ($row) {
+                return $row;
+            } else {
+               
+                return null;
+            }
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la récupération de l'appartement: " . $e->getMessage());
         }
-    } catch (PDOException $e) {
-        throw new Exception("Erreur lors de la vérification du statut de réservation de l'appartement: " . $e->getMessage());
+    }
+    
+
+
+    public function isAppartReserve(int $appartId): bool {
+        try {
+            $query = "SELECT disponibilite FROM appartement WHERE id = :id";
+    
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $appartId, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            if ($stmt->rowCount() > 0) {
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                return (bool)$row['disponibilite'];
+            } else {
+                throw new Exception("Aucun appartement trouvé avec l'ID $appartId");
+            }
+        } catch (PDOException $e) {
+            throw new Exception("Erreur lors de la vérification du statut de réservation de l'appartement: " . $e->getMessage());
+        }
     }
 }
+
+
+
 
 ?>
