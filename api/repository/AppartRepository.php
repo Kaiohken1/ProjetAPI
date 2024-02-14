@@ -41,4 +41,25 @@ class AppartementRepository {
         }
     }
 }
+
+
+public function isAppartementReserve(int $appartementId): bool {
+    try {
+        $query = "SELECT estReserve FROM appartements WHERE id = :id";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $appartementId, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        if ($stmt->rowCount() > 0) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (bool)$row['estReserve'];
+        } else {
+            throw new Exception("Aucun appartement trouvé avec l'ID $appartementId");
+        }
+    } catch (PDOException $e) {
+        throw new Exception("Erreur lors de la vérification du statut de réservation de l'appartement: " . $e->getMessage());
+    }
+}
+
 ?>

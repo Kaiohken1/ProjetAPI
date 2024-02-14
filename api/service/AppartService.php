@@ -16,4 +16,9 @@ class AppartService {
         return $this->repository->getApparts();
     }
 }
+
+function isAppartementReserve(int $appartementId): bool {
+    return $this->repository->isAppartementReserve($appartementId);
+}
+
 ?>
