@@ -53,20 +53,33 @@ class AppartController {
     }
 
     function createAppart($req, $res) {
+        $decodedToken = decodeToken($req->headers['Authorization']);
+        
+        if(!$decodedToken) {
+            $res->status = 401;
+            $res->content = json_encode(['error' => 'Token invalide.']);
+            return;
+        }
+    
+        if ($decodedToken->role !== 'proprietaire') {
+            $res->status = 403;
+            $res->content = json_encode(['error' => 'Acces non autorise']);
+            return;
+        }
+
         if (empty($req->body->superficie) || empty($req->body->adresse)) {
             $res->status = 400;
             $res->content = json_encode(['error' => 'Superficie et adresse requis.']);
             return;
         }
     
-        
         $appartObject = new Appart(
             $req->body->superficie,
             $req->body->personnes,
             $req->body->adresse,
             $req->body->disponibilite,
             $req->body->prix,
-            $req->body->proprietaireid
+            $decodedToken->userId
         );
     
         try {
