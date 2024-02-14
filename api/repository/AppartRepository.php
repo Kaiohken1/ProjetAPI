@@ -85,12 +85,33 @@ class AppartRepository {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 return (bool)$row['disponibilite'];
             } else {
-                throw new Exception("Aucun appartement trouvé avec l'ID $appartId");
+                throw new Exception("Aucun appartement trouve avec l'ID $appartId");
             }
         } catch (PDOException $e) {
             throw new Exception("Erreur lors de la vérification du statut de réservation de l'appartement: " . $e->getMessage());
         }
     }
+
+    public function getAppartPrice($id): int {
+        try {
+            $query = "SELECT prix FROM appartement WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+    
+            if ($stmt->rowCount() > 0) {
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $row['prix'];
+            } else {
+                throw new Exception("Aucun appartement trouve avec l'ID $id");
+            }
+        } catch (PDOException $e) {
+            throw new Exception("Erreur PDO lors de la recuperation du prix de l'appartement: " . $e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception("Erreur lors de la recuperation du prix de l'appartement: " . $e->getMessage());
+        }
+    }
+    
 }
 
 

@@ -6,12 +6,12 @@ class Reservation {
     public $clientId;
     public $prix;
 
-    public function __construct($appartementId, $dateDebut, $dateFin, $clientId, $prix_total) {
+    public function __construct($appartementId, $dateDebut, $dateFin, $clientId, $prix) {
         $this->appartementId = $appartementId;
         $this->dateDebut = $dateDebut;
         $this->dateFin = $dateFin;
         $this->clientId = $clientId;
-        $this->prix = $prix_total;
+        $this->prix = $prix;
     }
 }
 ?>

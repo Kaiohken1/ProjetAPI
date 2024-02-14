@@ -7,11 +7,10 @@ class Appart {
     public $prix;
     public $proprietaireid;
 
-    public function __construct($superficie, $personnes, $adresse, $disponibilite, $prix, $proprietaireid) {
+    public function __construct($superficie, $personnes, $adresse, $prix, $proprietaireid) {
         $this->superficie = $superficie;
         $this->personnes = $personnes;
         $this->adresse = $adresse;
-        $this->disponibilite = $disponibilite;
         $this->prix = $prix;
         $this->proprietaireid = $proprietaireid;
     }

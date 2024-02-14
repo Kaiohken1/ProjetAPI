@@ -10,9 +10,9 @@ class ReservationRepository {
         $this->conn = Database::getInstance();
     }
 
-    public function createReservation($ReservationObject, $appartementId) : void {
+    public function createReservation($ReservationObject) : void {
         try {
-            $query = "INSERT INTO reservation (appartementId, dateDebut, dateFin, clientId, prix) VALUES (:appartementId, :dateDebut, :dateFin, :clientId, :prix)"; // Fix the SQL query by adding placeholders for the bind parameters
+            $query = "INSERT INTO reservation (appartementId, dateDebut, dateFin, clientId, prix) VALUES (:appartementId, :dateDebut, :dateFin, :clientId, :prix)";
 
     
             $stmt = $this->conn->prepare($query);
@@ -26,7 +26,7 @@ class ReservationRepository {
     
             $stmt->execute();
         } catch (PDOException $e) {
-            throw new Exception("Erreur lors de la création de la réservation: " . $e->getMessage());
+            throw new Exception("Erreur lors de la creation de la reservation: " . $e->getMessage());
         }
     }
 

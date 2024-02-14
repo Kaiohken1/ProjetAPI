@@ -2,10 +2,6 @@
 require_once './service/UserService.php';
 require_once './model/UserModel.php';
 require_once "./common/token.php";
-require 'vendor/autoload.php';
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-
 
 class UserController {
     private $service;

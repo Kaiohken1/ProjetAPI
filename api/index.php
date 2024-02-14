@@ -47,6 +47,7 @@ function router($req, $res) {
             $res->content = '{"message": "Url not found"}';
     }
 }
+
 try {
     router($request, $response);
 } catch (Exception $e) {

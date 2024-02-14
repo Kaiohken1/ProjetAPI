@@ -77,7 +77,6 @@ class AppartController {
             $req->body->superficie,
             $req->body->personnes,
             $req->body->adresse,
-            $req->body->disponibilite,
             $req->body->prix,
             $decodedToken->userId
         );
@@ -97,6 +96,11 @@ class AppartController {
     }
 
     function deleteAppart($req, $res) {
+    }
+
+    function getAppartPrice($id) {
+        $appart = $this->service->getAppartPrice($id);
+        return $appart;
     }
 }
 ?>

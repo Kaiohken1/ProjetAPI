@@ -9,8 +9,8 @@ class ReservationService {
         $this->repository = new ReservationRepository();
     }
 
-    function createReservation($ReservationObject, $appartId) {
-        return $this->repository->createReservation($ReservationObject, $appartId);
+    function createReservation($reservationObject) {
+        return $this->repository->createReservation($reservationObject);
     }
 
     function getReservations() {
