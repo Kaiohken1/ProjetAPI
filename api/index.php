@@ -2,6 +2,7 @@
 include_once "./common/request.php";
 include_once "./common/response.php";
 include_once "./controller/UserController.php";
+include_once "./controller/AppartController.php";
 include_once "./controller/ReservationController.php";
 
 header("Content-Type: application/json; charset=utf8");
@@ -29,6 +30,10 @@ function router($req, $res) {
     switch ($req->uri[2]) {
         case "user":
             $controller = new UserController();
+            $controller->dispatch($req, $res);
+            break;
+        case "appart":
+            $controller = new AppartController();
             $controller->dispatch($req, $res);
             break;
         case "reservation":
