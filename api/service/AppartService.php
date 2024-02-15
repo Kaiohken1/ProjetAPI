@@ -21,6 +21,10 @@ class AppartService {
  return $this->repository->getappart($id);
     }
 
+    function deleteAppart($id) {
+        return $this->repository->deleteAppart($id);
+    }
+
     function isAppartReserve(){
         return $this->repository->isAppartReserve($appartId);
     }

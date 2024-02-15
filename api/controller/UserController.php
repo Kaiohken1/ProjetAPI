@@ -65,19 +65,19 @@ class UserController {
     }
 
     function getUsers($req, $res) {
-        $decodedToken = decodeToken($req->headers['Authorization']);
+        // $decodedToken = decodeToken($req->headers['Authorization']);
         
-        if(!$decodedToken) {
-            $res->status = 401;
-            $res->content = json_encode(['error' => 'Token invalide.']);
-            return;
-        }
+        // if(!$decodedToken) {
+        //     $res->status = 401;
+        //     $res->content = json_encode(['error' => 'Token invalide.']);
+        //     return;
+        // }
     
-        if ($decodedToken->role !== 'admin') {
-            $res->status = 403;
-            $res->content = json_encode(['error' => 'Acces non autorise']);
-            return;
-        }
+        // if ($decodedToken->role !== 'admin') {
+        //     $res->status = 403;
+        //     $res->content = json_encode(['error' => 'Acces non autorise']);
+        //     return;
+        // }
 
         $users = $this->service->getUsers();
         $res->status = 200;

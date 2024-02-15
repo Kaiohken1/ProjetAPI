@@ -111,6 +111,22 @@ class AppartRepository {
             throw new Exception("Erreur lors de la recuperation du prix de l'appartement: " . $e->getMessage());
         }
     }
+
+    public function deleteAppart($id): void {
+        $query = "DELETE FROM appartement WHERE id = :id";
+    
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+
+        $stmt->execute();
+    
+        $rows = $stmt->rowCount();
+        if ($rows === 0) {
+            throw new Exception("Aucun appart trouvé avec l'ID spécifié.");
+        }
+    }
+
+    
     
 }
 

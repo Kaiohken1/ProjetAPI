@@ -96,6 +96,30 @@ class AppartController {
     }
 
     function deleteAppart($req, $res) {
+        if (!isset($req->headers['Authorization'])) {
+            $res->status = 401;
+            $res->content = json_encode(['error' => 'Acces non autorise. Token manquant.']);
+            return;
+        }
+    
+        $decodedToken = decodeToken($req->headers['Authorization']);
+        
+        if(!$decodedToken) {
+            $res->status = 401;
+            $res->content = json_encode(['error' => 'Token invalide.']);
+            return;
+        }
+    
+        if ($decodedToken->role !== 'proprietaire') {
+            $res->status = 403;
+            $res->content = json_encode(['error' => 'Acces non autorise']);
+            return;
+        }
+    
+        $this->service->deleteAppart($req->uri[3]);
+    
+        $res->status = 200;
+        $res->content = json_encode(['message' => 'Appart supprime avec succes']);
     }
 
     function getAppartPrice($id) {
