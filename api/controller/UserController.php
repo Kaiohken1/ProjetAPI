@@ -65,6 +65,20 @@ class UserController {
     }
 
     function getUsers($req, $res) {
+        $decodedToken = decodeToken($req->headers['Authorization']);
+        
+        if(!$decodedToken) {
+            $res->status = 401;
+            $res->content = json_encode(['error' => 'Token invalide.']);
+            return;
+        }
+    
+        if ($decodedToken->role !== 'admin') {
+            $res->status = 403;
+            $res->content = json_encode(['error' => 'Acces non autorise']);
+            return;
+        }
+
         $users = $this->service->getUsers();
         $res->status = 200;
         $res->content = $users;
@@ -120,6 +134,10 @@ class UserController {
         }
     
         $this->service->updateUser($req->uri[3], $valuesToUpdate);
+
+            
+        $res->status = 200;
+        $res->content = json_encode(['message' => 'Utilisateur modifie avec succes']);
     }
     
     

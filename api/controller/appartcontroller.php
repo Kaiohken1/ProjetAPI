@@ -55,7 +55,7 @@ class AppartController {
     function createAppart($req, $res) {
         $decodedToken = decodeToken($req->headers['Authorization']);
         
-        if(!$decodedToken) {
+        if(!$decodedToken || !$req->headers['Authorization']) {
             $res->status = 401;
             $res->content = json_encode(['error' => 'Token invalide.']);
             return;

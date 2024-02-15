@@ -57,6 +57,12 @@ class ReservationController {
     private function createReservation($req, $res) {
         $decodedToken = decodeToken($req->headers['Authorization']);
 
+        if (!$decodedToken) {
+            $res->status = 400;
+            $res->content = json_encode(['error' => 'Aucun Token']);
+            return;
+        }
+
         if(empty($req->body->dateDebut) || empty($req->body->dateFin)) {
             $res->status = 400;
             $res->content = json_encode(['error' => 'Les données nécessaires pour créer une réservation sont manquantes.']);
