@@ -63,9 +63,9 @@ class ReservationController {
             return;
         }
 
-        if(empty($req->body->dateDebut) || empty($req->body->dateFin)) {
+        if (empty($req->uri[3])) {
             $res->status = 400;
-            $res->content = json_encode(['error' => 'Les données nécessaires pour créer une réservation sont manquantes.']);
+            $res->content = json_encode(['error' => 'Aucun appartement donne']);
             return;
         }
 
@@ -101,20 +101,21 @@ class ReservationController {
             return;
         }
 
-        // $decodedToken = decodeToken($req->headers['Authorization']);
+        $decodedToken = decodeToken($req->headers['Authorization']);
 
-        // $reservation = $this->service->getReservation($req->uri[3]);
+        $reservation = $this->service->getReservation($req->uri[3]);
 
-        // if(!$reservation || !isset($reservation['clientId'])) {
-        //     $res->status = 404;
-        //     $res->content = json_encode(['error' => 'Reservation introuvable.']);
-        //     return;
-        // }
+        if(!$reservation || !isset($reservation['clientid'])) {
+            $res->status = 404;
+            $res->content = json_encode(['error' => 'Reservation introuvable.']);
+            return;
+        }
 
-        // if(!$decodedToken || $decodedToken->userId != $reservation['clientId']) {
-        //     $res->status = 403;
-        //     $res->content = json_encode(['error' => 'Accès non autorisé.']);
-        // }
+        if(!$decodedToken || $decodedToken->userId !== $reservation['clientid']) {
+            $res->status = 403;
+            $res->content = json_encode(['error' => 'Acces non autorise.']);
+            return;
+        }
 
         $this->service->deleteReservation($req->uri[3]);
 
